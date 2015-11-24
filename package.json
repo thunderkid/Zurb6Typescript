@@ -16,6 +16,20 @@
     "gulp": "^3.9.0",
     "tsify": "^0.12.2",
     "browserify": "^11.2.0",
+    "browserify-shim": "^3.8.11",
     "vinyl-source-stream": "^1.1.0"
+  },
+  "browser": {
+    "jquery": "./node_modules/jquery/dist/jquery.js",
+    "foundation": "./node_modules/foundation-sites/dist/foundation.js"
+  },
+  "browserify-shim": {
+    "jquery": "$",
+    "foundation": "foundation"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
   }
 }
