@@ -4,6 +4,7 @@ var browserify	 	= require('browserify');
 var tsify			= require('tsify');
 var source 			= require('vinyl-source-stream');
 var rimraf          = require('rimraf');
+var panini  		= require('panini');
 var isProduction 	= false;  // todo: currently not hardwired.
 
 
@@ -48,6 +49,20 @@ function compiler(mainDir, mainFile, destDir, destFile) {
 
 gulp.task('compiletest', function() {
     return compiler('./', 'source/ts/app.ts', 'dist/', 'appbundle.js', true);
+});
+
+
+// Copy page templates into finished HTML files
+gulp.task('pages', function() {
+  gulp.src('source/pages/**/*.{html,hbs,handlebars}')
+    .pipe(panini({
+      root: 'source/pages/',
+      layouts: 'source/layouts/',
+      partials: 'source/partials/',
+      data: 'source/data/',
+      helpers: 'source/helpers/'
+    }))
+    .pipe(gulp.dest('dist'));
 });
 
 
