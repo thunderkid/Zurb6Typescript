@@ -1,4 +1,4 @@
-import { Sayer } from './morestuff';
+import { Sayer } from '../common/morestuff';
 
 declare var require;
 

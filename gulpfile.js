@@ -28,6 +28,8 @@ var PATHS = {
 };
 
 
+var appName = 'Site1';  // later make this an array
+
 
 var compilationCount = 1;
 function logCompilation(projName) {
@@ -65,7 +67,7 @@ function compiler(mainDir, mainFile, destDir, destFile) {
 
 
 gulp.task('compileTS', function() {
-    return compiler('./', 'source/ts/app.ts', 'output/', 'appbundle.js', true);
+    return compiler('./', `source/ts/${appName}/app.ts`, `output/${appName}`, 'appbundle.js', true);
 });
 
 
