@@ -3,6 +3,7 @@ var gulp     		= require('gulp');
 var browserify	 	= require('browserify');
 var tsify			= require('tsify');
 var source 			= require('vinyl-source-stream');
+var rimraf          = require('rimraf');
 var isProduction 	= false;  // todo: currently not hardwired.
 
 
@@ -10,6 +11,8 @@ var isProduction 	= false;  // todo: currently not hardwired.
 var COMPATIBILITY = ['last 2 versions', 'ie >= 9'];
 
 var PATHS = {
+  source: 'source',
+  output: 'dist',
   sass: [
     'node_modules/foundation-sites/scss',
     'node_modules/motion-ui/src/'
@@ -45,6 +48,13 @@ function compiler(mainDir, mainFile, destDir, destFile) {
 
 gulp.task('compiletest', function() {
     return compiler('./', 'source/ts/app.ts', 'dist/', 'appbundle.js', true);
+});
+
+
+// Delete the "dist" folder
+// This happens every time a build starts
+gulp.task('clean', function(done) {
+  rimraf('dist', done);
 });
 
 
