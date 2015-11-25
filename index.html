@@ -3,13 +3,50 @@
     <title>Minimal typescript foundation 6</title>
 
     <script src='jsBundles/appbundle.js'></script>
-
+    <link rel="stylesheet" href="node_modules/foundation-sites/dist/foundation.css" />
 </head>
 <body>
     
+
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <ul class="dropdown menu" data-dropdown-menu>
+          <li class="menu-text">Site Title</li>
+          <li class="has-submenu">
+            <a href="#">One</a>
+            <ul class="submenu menu vertical" data-submenu>
+              <li><a href="#">One</a></li>
+              <li><a href="#">Two</a></li>
+              <li><a id='toggly' href="#">ToggleIt</a></li>
+            </ul>
+          </li>
+          <li><a href="#">Two</a></li>
+          <li><a href="#">Three</a></li>
+        </ul>
+      </div>
+      <div class="top-bar-right">
+        <ul class="menu">
+          <li><input type="search" placeholder="Search"></li>
+          <li><button type="button" class="button">Search</button></li>
+        </ul>
+      </div>
+    </div>
+
+
+
+
 Not too much here yet.
-<button id='runt'>but clickme</button>
-<p id='stain'>here we go</p>
+<button id='runt' type='button' class='alert button'>but clickme</button>
+<p id='stain' class='text-center'>here we go</p>
+
+
+<div class="callout warning">
+  <h5>This is a secondary panel</h5>
+  <p>It has an easy to override visual style, and is appropriately subdued.</p>
+  <a href="#">It's dangerous to go alone, take this.</a>
+</div>
+
+
 
 </body>
 </html>
