@@ -11,10 +11,15 @@ function setRunt() {
 	$(document).foundation();
 	$('#runt').click( pusser );	
 	$('#toggly').click(toggit);
+	$('#colory').click(yellowy);
 }
 
 function toggit() {
 	$('#stain').toggle();
+}
+
+function yellowy() {
+	$('#stain').toggleClass('yellowy');
 }
 
 
