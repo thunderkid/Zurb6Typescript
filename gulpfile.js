@@ -44,7 +44,7 @@ function compiler(mainDir, mainFile, destDir, destFile) {
 
 
 gulp.task('compiletest', function() {
-    return compiler('./', 'ts/app.ts', 'jsBundles/', 'appbundle.js', true);
+    return compiler('./', 'source/ts/app.ts', 'dist/', 'appbundle.js', true);
 });
 
 
@@ -61,7 +61,7 @@ gulp.task('sass', function() {
 
   var minifycss = $.if(isProduction, $.minifyCss());
 
-  return gulp.src('scss/app.scss')
+  return gulp.src('source/scss/app.scss')
     .pipe($.sourcemaps.init())
     .pipe($.sass({
       includePaths: PATHS.sass
@@ -73,6 +73,6 @@ gulp.task('sass', function() {
     .pipe(uncss)
     .pipe(minifycss)
     .pipe($.if(!isProduction, $.sourcemaps.write()))
-    .pipe(gulp.dest('dist/css'));
+    .pipe(gulp.dest('dist'));  // will name it dist/app.css  
 });
 
