@@ -1,3 +1,5 @@
+import { Sayer } from './morestuff';
+
 declare var require;
 
 //var jQuery = require('jquery');
@@ -24,7 +26,8 @@ function yellowy() {
 
 
 function pusser() {
-	alert('tiny little runt clicked');
+	var sayy = new Sayer();
+	alert('tiny little runt clicked'+sayy.sayit());
 	$('#stain').toggle();
 }
 
