@@ -2,7 +2,7 @@ class Sayer {
 	a: string = "you don't";
 
 	sayit() {
-		return this.a + "really say do you???";
+		return this.a + "honestly say do you???";
 	}
 }
 

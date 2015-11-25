@@ -71,16 +71,18 @@ gulp.task('pages', function() {
 });
 
 
+gulp.task('pages:reset', function(cb) {
+  panini.refresh();
+  gulp.run('pages');
+  cb();
+});
+
+
 // Delete the "dist" folder
 // This happens every time a build starts
 gulp.task('clean', function(done) {
   rimraf('dist', done);
 });
-
-
-
-
-
 
 
 
@@ -123,4 +125,14 @@ gulp.task('server', ['build'], function() {
   browser.init({
     server: 'dist', port: PORT
   });
+});
+
+
+// Build the site, run the server, and watch for file changes
+gulp.task('default', ['build', 'server'], function() {
+  gulp.watch(['source/pages/**/*.html'], ['pages', browser.reload]);
+  gulp.watch(['source/{layouts,partials}/**/*.html'], ['pages:reset', browser.reload]);
+  gulp.watch(['source/scss/**/*.scss'], ['sass', browser.reload]);
+  gulp.watch(['source/ts/**/*.ts'], ['compileTS', browser.reload]);
+  //gulp.watch(['src/assets/img/**/*'], ['images', browser.reload]);
 });
