@@ -1,8 +1,19 @@
 declare var require;
 
-var foundation = require('foundation-sites');
-var jQuery = require('jquery');
+//var jQuery = require('jquery');
+//var foundation = require('foundation-sites');
+var $ = require('jquery');
 
-function pus() {
-	alert('this is pus');
+
+$(document).ready(setRunt);
+
+
+function setRunt() {
+	$('#runt').click( pusser );	
 }
+
+function pusser() {
+	alert('runty clicked');
+	$('#stain').toggle();
+}
+

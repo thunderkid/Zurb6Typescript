@@ -18,7 +18,7 @@ function logError(str) {
 
 function compiler(mainDir, mainFile, destDir, destFile) {
     logCompilation('release '+destFile);
-    var bundler = browserify({basedir: mainDir, debug: true})
+    var bundler = browserify({basedir: mainDir, debug: true, cache: {}, packageCache: {}, fullPaths: true})
         .add(mainFile)
         .plugin(tsify, { noImplicitAny: false})
         .on('error', function (error) { logError('error: ' + error.toString()); }) 
