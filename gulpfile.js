@@ -1,14 +1,17 @@
 var $        		= require('gulp-load-plugins')();
+var argv     		= require('yargs').argv;
 var gulp     		= require('gulp');
 var browser         = require('browser-sync');
 var sequence        = require('run-sequence');
 var browserify	 	= require('browserify');
 var tsify			= require('tsify');
 var source 			= require('vinyl-source-stream');
+var buffer 			= require('vinyl-buffer');
 var rimraf          = require('rimraf');
 var panini  		= require('panini');
-var isProduction 	= false;  // todo: currently not hardwired.
 
+// Check for --production flag
+var isProduction = !!(argv.production);
 
 // Port to use for the development server.
 var PORT = 8000;
@@ -46,8 +49,16 @@ function compiler(mainDir, mainFile, destDir, destFile) {
         .plugin(tsify, { noImplicitAny: false})
         .on('error', function (error) { logError('error: ' + error.toString()); }) 
 
+	var uglify = $.if(isProduction, $.uglify()
+    	.on('error', function (e) {
+      	console.log(e);
+    }));
+
+
     return bundler.bundle()
             .pipe(source(destFile))
+            .pipe(buffer())  // just trying to make uglify work
+            .pipe(uglify)
             .pipe(gulp.dest(destDir));
 }
 
@@ -90,7 +101,7 @@ gulp.task('clean', function(done) {
 // In production, the CSS is compressed
 gulp.task('sass', function() {
   var uncss = $.if(isProduction, $.uncss({  // this removes unused css
-    html: ['src/**/*.html'],
+    html: ['source/**/*.html'],  // 
     ignore: [
       new RegExp('^meta\..*'),
       new RegExp('^\.is-.*')
