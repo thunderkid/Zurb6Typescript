@@ -24,7 +24,7 @@ function yellowy() {
 
 
 function pusser() {
-	alert('runty clicked');
+	alert('tiny little runt clicked');
 	$('#stain').toggle();
 }
 

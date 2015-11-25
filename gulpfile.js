@@ -47,7 +47,7 @@ function compiler(mainDir, mainFile, destDir, destFile) {
 }
 
 
-gulp.task('compiletest', function() {
+gulp.task('compileTS', function() {
     return compiler('./', 'source/ts/app.ts', 'dist/', 'appbundle.js', true);
 });
 
