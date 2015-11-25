@@ -6,7 +6,6 @@ var sequence        = require('run-sequence');
 var browserify	 	= require('browserify');
 var tsify			= require('tsify');
 var source 			= require('vinyl-source-stream');
-var buffer 			= require('vinyl-buffer');
 var rimraf          = require('rimraf');
 var panini  		= require('panini');
 
@@ -54,11 +53,13 @@ function compiler(mainDir, mainFile, destDir, destFile) {
       	console.log(e);
     }));
 
+    var uglify2 = $.if(isProduction, $.streamify($.uglify({mangle: true, mangle_properties: true}).on('error', function (e) {
+      	console.log(e);
+    })));   // minification. mangle_properties doesn't seem to work.
 
     return bundler.bundle()
             .pipe(source(destFile))
-            .pipe(buffer())  // just trying to make uglify work
-            .pipe(uglify)
+            .pipe(uglify2)
             .pipe(gulp.dest(destDir));
 }
 
@@ -119,7 +120,7 @@ gulp.task('sass', function() {
     .pipe($.autoprefixer({
       browsers: COMPATIBILITY
     }))
-    .pipe(uncss)
+ //   .pipe(uncss)
     .pipe(minifycss)
     .pipe($.if(!isProduction, $.sourcemaps.write()))
     .pipe(gulp.dest('dist'));  // will name it dist/app.css  
