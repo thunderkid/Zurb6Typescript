@@ -20,7 +20,7 @@ var COMPATIBILITY = ['last 2 versions', 'ie >= 9'];
 
 var PATHS = {
   source: 'source',
-  output: 'dist',
+  output: 'output',
   sass: [
     'node_modules/foundation-sites/scss',
     'node_modules/motion-ui/src/'
@@ -65,7 +65,7 @@ function compiler(mainDir, mainFile, destDir, destFile) {
 
 
 gulp.task('compileTS', function() {
-    return compiler('./', 'source/ts/app.ts', 'dist/', 'appbundle.js', true);
+    return compiler('./', 'source/ts/app.ts', 'output/', 'appbundle.js', true);
 });
 
 
@@ -79,7 +79,7 @@ gulp.task('pages', function() {
       data: 'source/html/data/',
       helpers: 'source/html/helpers/'
     }))
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest('output'));
 });
 
 
@@ -90,10 +90,10 @@ gulp.task('pages:reset', function(cb) {
 });
 
 
-// Delete the "dist" folder
+// Delete the "output" folder
 // This happens every time a build starts
 gulp.task('clean', function(done) {
-  rimraf('dist', done);
+  rimraf('output', done);
 });
 
 
@@ -123,11 +123,11 @@ gulp.task('sass', function() {
  //   .pipe(uncss)
     .pipe(minifycss)
     .pipe($.if(!isProduction, $.sourcemaps.write()))
-    .pipe(gulp.dest('dist'));  // will name it dist/app.css  
+    .pipe(gulp.dest('output'));  // will name it output/app.css  
 });
 
 
-// Build the "dist" folder by running all of the above tasks
+// Build the "output" folder by running all of the above tasks
 gulp.task('build', function(done) {
   sequence('clean', ['pages', 'sass', 'compileTS'], done);
 });
@@ -135,7 +135,7 @@ gulp.task('build', function(done) {
 // Start a server with LiveReload to preview the site in
 gulp.task('server', ['build'], function() {
   browser.init({
-    server: 'dist', port: PORT
+    server: 'output', port: PORT
   });
 });
 
