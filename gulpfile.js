@@ -1,5 +1,7 @@
 var $        		= require('gulp-load-plugins')();
 var gulp     		= require('gulp');
+var browser         = require('browser-sync');
+var sequence        = require('run-sequence');
 var browserify	 	= require('browserify');
 var tsify			= require('tsify');
 var source 			= require('vinyl-source-stream');
@@ -7,6 +9,9 @@ var rimraf          = require('rimraf');
 var panini  		= require('panini');
 var isProduction 	= false;  // todo: currently not hardwired.
 
+
+// Port to use for the development server.
+var PORT = 8000;
 
 // Browsers to target when prefixing CSS.
 var COMPATIBILITY = ['last 2 versions', 'ie >= 9'];
@@ -73,6 +78,12 @@ gulp.task('clean', function(done) {
 });
 
 
+
+
+
+
+
+
 // Compile Sass into CSS
 // In production, the CSS is compressed
 gulp.task('sass', function() {
@@ -101,3 +112,15 @@ gulp.task('sass', function() {
     .pipe(gulp.dest('dist'));  // will name it dist/app.css  
 });
 
+
+// Build the "dist" folder by running all of the above tasks
+gulp.task('build', function(done) {
+  sequence('clean', ['pages', 'sass', 'compileTS'], done);
+});
+
+// Start a server with LiveReload to preview the site in
+gulp.task('server', ['build'], function() {
+  browser.init({
+    server: 'dist', port: PORT
+  });
+});
