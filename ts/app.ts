@@ -1,8 +1,8 @@
 declare var require;
 
 //var jQuery = require('jquery');
-//var foundation = require('foundation-sites');
 var $ = require('jquery');
+var foundation = require('foundation-sites');
 
 
 $(document).ready(setRunt);
