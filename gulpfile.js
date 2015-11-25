@@ -71,13 +71,13 @@ gulp.task('compileTS', function() {
 
 // Copy page templates into finished HTML files
 gulp.task('pages', function() {
-  gulp.src('source/pages/**/*.{html,hbs,handlebars}')
+  gulp.src('source/html/pages/**/*.{html,hbs,handlebars}')
     .pipe(panini({
-      root: 'source/pages/',
-      layouts: 'source/layouts/',
-      partials: 'source/partials/',
-      data: 'source/data/',
-      helpers: 'source/helpers/'
+      root: 'source/html/pages/',
+      layouts: 'source/html/layouts/',
+      partials: 'source/html/partials/',
+      data: 'source/html/data/',
+      helpers: 'source/html/helpers/'
     }))
     .pipe(gulp.dest('dist'));
 });
@@ -142,8 +142,8 @@ gulp.task('server', ['build'], function() {
 
 // Build the site, run the server, and watch for file changes
 gulp.task('default', ['build', 'server'], function() {
-  gulp.watch(['source/pages/**/*.html'], ['pages', browser.reload]);
-  gulp.watch(['source/{layouts,partials}/**/*.html'], ['pages:reset', browser.reload]);
+  gulp.watch(['source/html/pages/**/*.html'], ['pages', browser.reload]);
+  gulp.watch(['source/html/{layouts,partials}/**/*.html'], ['pages:reset', browser.reload]);
   gulp.watch(['source/scss/**/*.scss'], ['sass', browser.reload]);
   gulp.watch(['source/ts/**/*.ts'], ['compileTS', browser.reload]);
   //gulp.watch(['src/assets/img/**/*'], ['images', browser.reload]);
