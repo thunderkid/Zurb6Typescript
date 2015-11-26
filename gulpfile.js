@@ -31,6 +31,7 @@ var PATHS = {
 var appName = 'Site1';  // later make this an array
 var tsStartFile = `source/ts/${appName}/app.ts`;
 var scssStartFile = `source/scss/${appName}/app.scss`;
+var htmlSourceDir = `source/html/${appName}/`;
 var outputDir = `output/${appName}`;
 
 
@@ -72,15 +73,32 @@ gulp.task('compileTS', function() {
 
 // Copy page templates into finished HTML files
 gulp.task('pages', function() {
-  gulp.src('source/html/pages/**/*.{html,hbs,handlebars}')
+//  gulp.src('source/html/**/*.{html,hbs,handlebars}')
+
+//  gulp.src(htmlSourceDir+'**/*.{html,hbs,handlebars}')
+//    .pipe(panini({
+//      root: htmlSourceDir+'pages/',
+//      layouts: htmlSourceDir+'layouts/',
+//      partials: htmlSourceDir+'partials/',  // 'source/html/partials/',   // using this as a common location of reusable partials for all apps.
+//      data: htmlSourceDir+'data/',
+//      helpers: htmlSourceDir+'helpers/'
+//    }))
+//    .pipe(gulp.dest(outputDir));
+
+
+  gulp.src('source/html/Site1/pages/**/*.{html,hbs,handlebars}')
     .pipe(panini({
-      root: 'source/html/pages/',
-      layouts: 'source/html/layouts/',
-      partials: 'source/html/partials/',
-      data: 'source/html/data/',
-      helpers: 'source/html/helpers/'
+      root: 'source/html/Site1/pages/',
+      layouts: 'source/html/Site1/layouts/',
+      partials: 'source/html/Site1/partials/',  // 'source/html/Site1/partials/',   // using this as a common location of reusable partials for all apps.
+      data: 'source/html/Site1/data/',
+      helpers: 'source/html/Site1/helpers/'
     }))
-    .pipe(gulp.dest('output'));
+    .pipe(gulp.dest(outputDir));
+
+
+
+
 });
 
 
