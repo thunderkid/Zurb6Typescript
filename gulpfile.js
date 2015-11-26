@@ -152,6 +152,6 @@ gulp.task('default', ['build', 'server'], function() {
   gulp.watch([htmlPagesPattern], ['pages', browser.reload]);
   gulp.watch([htmlSourceDir+'layouts/**/*.html', htmlPartialsDir+'**/*.html'], ['pages:reset', browser.reload]);
   gulp.watch([`source/scss/${appName}/`+'**/*.scss'], ['sass', browser.reload]);
-  gulp.watch([`source/ts/${appName}/`+'**/*.ts'], ['compileTS', browser.reload]);
+  gulp.watch([`source/ts/${appName}/`+'**/*.ts', 'source/ts/common/**/*.ts'], ['compileTS', browser.reload]);
   //gulp.watch(['src/assets/img/**/*'], ['images', browser.reload]);
 });
