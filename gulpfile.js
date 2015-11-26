@@ -73,7 +73,6 @@ gulp.task('compileTS', function() {
 
 // Copy page templates into finished HTML files
 gulp.task('pages', function() {
-//  gulp.src('source/html/**/*.{html,hbs,handlebars}')
 
   gulp.src(htmlSourceDir+'pages/**/*.{html,hbs,handlebars}')
     .pipe(panini({
@@ -84,20 +83,6 @@ gulp.task('pages', function() {
       helpers: htmlSourceDir+'helpers/'
     }))
     .pipe(gulp.dest(outputDir));
-
-
- // gulp.src('source/html/Site1/pages/**/*.{html,hbs,handlebars}')
- //   .pipe(panini({
- //     root: 'source/html/Site1/pages/',
- //     layouts: 'source/html/Site1/layouts/',
- //     partials: 'source/html/Site1/partials/',  // 'source/html/Site1/partials/',   // using this as a common location of reusable partials for all apps.
- //     data: 'source/html/Site1/data/',
- //     helpers: 'source/html/Site1/helpers/'
- //   }))
- //   .pipe(gulp.dest(outputDir));
-
-
-
 
 });
 
@@ -155,7 +140,7 @@ gulp.task('build', function(done) {
 // Start a server with LiveReload to preview the site in
 gulp.task('server', ['build'], function() {
   browser.init({
-    server: 'output', port: PORT
+    server: outputDir, port: PORT
   });
 });
 
