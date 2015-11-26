@@ -30,7 +30,10 @@ var PATHS = {
 
 var appName = 'Site1';  // later make this an array
 var tsStartFile = `source/ts/${appName}/app.ts`;
+var scssStartFile = `source/scss/${appName}/app.scss`;
 var outputDir = `output/${appName}`;
+
+
 
 var compilationCount = 1;
 function logCompilation(projName) {
@@ -51,18 +54,13 @@ function compiler(mainDir, mainFile, destDir, destFile) {
         .plugin(tsify, { noImplicitAny: false})
         .on('error', function (error) { logError('error: ' + error.toString()); }) 
 
-	var uglify = $.if(isProduction, $.uglify()
-    	.on('error', function (e) {
-      	console.log(e);
-    }));
-
-    var uglify2 = $.if(isProduction, $.streamify($.uglify({mangle: true, mangle_properties: true}).on('error', function (e) {
+    var uglify = $.if(isProduction, $.streamify($.uglify({mangle: true, mangle_properties: true}).on('error', function (e) {
       	console.log(e);
     })));   // minification. mangle_properties doesn't seem to work.
 
     return bundler.bundle()
             .pipe(source(destFile))
-            .pipe(uglify2)
+            .pipe(uglify)
             .pipe(gulp.dest(destDir));
 }
 
@@ -96,7 +94,7 @@ gulp.task('pages:reset', function(cb) {
 // Delete the "output" folder
 // This happens every time a build starts
 gulp.task('clean', function(done) {
-  rimraf('output', done);
+  rimraf(outputDir, done);
 });
 
 
@@ -104,17 +102,18 @@ gulp.task('clean', function(done) {
 // Compile Sass into CSS
 // In production, the CSS is compressed
 gulp.task('sass', function() {
-  var uncss = $.if(isProduction, $.uncss({  // this removes unused css
-    html: ['source/**/*.html'],  // 
-    ignore: [
-      new RegExp('^meta\..*'),
-      new RegExp('^\.is-.*')
-    ]
-  }));
+
+//  var uncss = $.if(isProduction, $.uncss({  // this removes unused css. Didn't work - seemed to remove everything.
+//    html: ['source/**/*.html'],  // and this needs to be changed if we ever use it.
+//    ignore: [
+//      new RegExp('^meta\..*'),
+//      new RegExp('^\.is-.*')
+//    ]
+//  }));
 
   var minifycss = $.if(isProduction, $.minifyCss());
 
-  return gulp.src('source/scss/app.scss')
+  return gulp.src(scssStartFile)
     .pipe($.sourcemaps.init())
     .pipe($.sass({
       includePaths: PATHS.sass
@@ -126,7 +125,7 @@ gulp.task('sass', function() {
  //   .pipe(uncss)
     .pipe(minifycss)
     .pipe($.if(!isProduction, $.sourcemaps.write()))
-    .pipe(gulp.dest('output'));  // will name it output/app.css  
+    .pipe(gulp.dest(outputDir));  // will name it output/app.css  
 });
 
 
