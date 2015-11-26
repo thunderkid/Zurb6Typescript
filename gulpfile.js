@@ -32,6 +32,8 @@ var appName = 'Site1';  // later make this an array
 var tsStartFile = `source/ts/${appName}/app.ts`;
 var scssStartFile = `source/scss/${appName}/app.scss`;
 var htmlSourceDir = `source/html/${appName}/`;
+var htmlPagesPattern = htmlSourceDir+'pages/**/*.{html,hbs,handlebars}';
+var htmlPartialsDir =  'source/html/partials/';   // using this as a common location of reusable partials for all apps.
 var outputDir = `output/${appName}`;
 
 
@@ -74,11 +76,11 @@ gulp.task('compileTS', function() {
 // Copy page templates into finished HTML files
 gulp.task('pages', function() {
 
-  gulp.src(htmlSourceDir+'pages/**/*.{html,hbs,handlebars}')
+  gulp.src(htmlPagesPattern)
     .pipe(panini({
       root: htmlSourceDir+'pages/',
       layouts: htmlSourceDir+'layouts/',
-      partials: 'source/html/partials/',   // using this as a common location of reusable partials for all apps.
+      partials: htmlPartialsDir,   // using this as a common location of reusable partials for all apps.
       data: htmlSourceDir+'data/',
       helpers: htmlSourceDir+'helpers/'
     }))
@@ -147,9 +149,9 @@ gulp.task('server', ['build'], function() {
 
 // Build the site, run the server, and watch for file changes
 gulp.task('default', ['build', 'server'], function() {
-  gulp.watch(['source/html/pages/**/*.html'], ['pages', browser.reload]);
-  gulp.watch(['source/html/{layouts,partials}/**/*.html'], ['pages:reset', browser.reload]);
-  gulp.watch(['source/scss/**/*.scss'], ['sass', browser.reload]);
-  gulp.watch(['source/ts/**/*.ts'], ['compileTS', browser.reload]);
+  gulp.watch([htmlPagesPattern], ['pages', browser.reload]);
+  gulp.watch([htmlSourceDir+'layouts/**/*.html', htmlPartialsDir+'**/*.html'], ['pages:reset', browser.reload]);
+  gulp.watch([`source/scss/${appName}/`+'**/*.scss'], ['sass', browser.reload]);
+  gulp.watch([`source/ts/${appName}/`+'**/*.ts'], ['compileTS', browser.reload]);
   //gulp.watch(['src/assets/img/**/*'], ['images', browser.reload]);
 });
