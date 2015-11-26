@@ -142,7 +142,7 @@ gulp.task('build', function(done) {
 // Start a server with LiveReload to preview the site in
 gulp.task('server', ['build'], function() {
   browser.init({
-    server: outputDir, port: PORT
+    server: 'output', startPath: `/${appName}`, port: PORT
   });
 });
 
