@@ -28,7 +28,10 @@ var PATHS = {
 };
 
 
-var appName = 'Site1';  // later make this an array
+// pass param --site="Site2" etc.
+var appName = !!(argv.site) ? argv.site : 'Site1';
+
+
 var tsStartFile = `source/ts/${appName}/app.ts`;
 var scssStartFile = `source/scss/${appName}/app.scss`;
 var htmlSourceDir = `source/html/${appName}/`;

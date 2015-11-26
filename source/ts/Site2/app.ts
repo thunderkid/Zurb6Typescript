@@ -27,7 +27,7 @@ function yellowy() {
 
 function pusser() {
 	var sayy = new Sayer();
-	alert('primary runt clicked'+sayy.sayit());
+	alert('secondary runt sed '+sayy.sayit());
 	$('#stain').toggle();
 }
 
