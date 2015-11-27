@@ -10,6 +10,7 @@ var foundation = require('foundation-sites');
 $(document).ready(setRunt);
 
 function setRunt() {
+	// noljdsfksd
 	$(document).foundation();
 	$('#runt').click( pusser );	
 	$('#toggly').click(toggit);

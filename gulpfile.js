@@ -9,6 +9,9 @@ var source 			= require('vinyl-source-stream');
 var rimraf          = require('rimraf');
 var panini  		= require('panini');
 
+
+// pass param --site="Site2" etc.
+var appName = !!(argv.site) ? argv.site : 'Site1';
 // Check for --production flag
 var isProduction = !!(argv.production);
 
@@ -28,17 +31,15 @@ var PATHS = {
 };
 
 
-// pass param --site="Site2" etc.
-var appName = !!(argv.site) ? argv.site : 'Site1';
-
-
 var tsStartFile = `source/ts/${appName}/app.ts`;
 var scssStartFile = `source/scss/${appName}/app.scss`;
 var htmlSourceDir = `source/html/${appName}/`;
 var htmlPagesPattern = htmlSourceDir+'pages/**/*.{html,hbs,handlebars}';
-var htmlPartialsDir =  'source/html/partials/';   // using this as a common location of reusable partials for all apps.
-var outputDir = `output/${appName}`;
 
+var htmlPartialsDir =  'source/html/partials/';   // using this as a common location of reusable partials for all apps.
+var commonTsDir = 'source/ts/common/';	  // common typescript functionality
+
+var outputDir = `output/${appName}`;
 
 
 var compilationCount = 1;
@@ -47,24 +48,30 @@ function logCompilation(projName) {
 }
 
 
-function logError(str) {
+var errorCount = 0;
+function logError(err) {
     //gutil.log(gutil.colors.bgYellow(str));
-    console.log(' error '+str);
+    console.log(' error '+err);
+    errorCount++;
+}
+
+function logBuildDone() {
+	console.log(`build completed: ${errorCount} errors`)
 }
 
 
 function compiler(mainDir, mainFile, destDir, destFile) {
+    console.log('starting TS compiler');
     logCompilation('release '+destFile);
     var bundler = browserify({basedir: mainDir, debug: true, cache: {}, packageCache: {}, fullPaths: true})
         .add(mainFile)
-        .plugin(tsify, { noImplicitAny: false})
-        .on('error', function (error) { logError('error: ' + error.toString()); }) 
+        .plugin(tsify, { noImplicitAny: false});
+        //.on('error', function (error) { logError('error: ' + error.toString()); }) ;
 
-    var uglify = $.if(isProduction, $.streamify($.uglify({mangle: true, mangle_properties: true}).on('error', function (e) {
-      	console.log(e);
-    })));   // minification. mangle_properties doesn't seem to work.
+    var uglify = $.if(isProduction, $.streamify($.uglify({mangle: true, mangle_properties: true}).on('error', logError)));      // minification. mangle_properties doesn't seem to work.
 
     return bundler.bundle()
+        	.on('error', logError) 
             .pipe(source(destFile))
             .pipe(uglify)
             .pipe(gulp.dest(destDir));
@@ -88,14 +95,13 @@ gulp.task('pages', function() {
       helpers: htmlSourceDir+'helpers/'
     }))
     .pipe(gulp.dest(outputDir));
-
 });
 
 
-gulp.task('pages:reset', function(cb) {
+gulp.task('pages:reset', function(callback) {
   panini.refresh();
   gulp.run('pages');
-  cb();
+  callback();
 });
 
 
@@ -104,7 +110,6 @@ gulp.task('pages:reset', function(cb) {
 gulp.task('clean', function(done) {
   rimraf(outputDir, done);
 });
-
 
 
 // Compile Sass into CSS
@@ -126,7 +131,7 @@ gulp.task('sass', function() {
     .pipe($.sass({
       includePaths: PATHS.sass
     })
-      .on('error', $.sass.logError))
+      .on('error', function(e) {logError(e); $.sass.logError(e);}))
     .pipe($.autoprefixer({
       browsers: COMPATIBILITY
     }))
@@ -144,6 +149,7 @@ gulp.task('build', function(done) {
 
 // Start a server with LiveReload to preview the site in
 gulp.task('server', ['build'], function() {
+  logBuildDone();
   browser.init({
     server: 'output', startPath: `/${appName}`, port: PORT
   });
@@ -155,6 +161,6 @@ gulp.task('default', ['build', 'server'], function() {
   gulp.watch([htmlPagesPattern], ['pages', browser.reload]);
   gulp.watch([htmlSourceDir+'layouts/**/*.html', htmlPartialsDir+'**/*.html'], ['pages:reset', browser.reload]);
   gulp.watch([`source/scss/${appName}/`+'**/*.scss'], ['sass', browser.reload]);
-  gulp.watch([`source/ts/${appName}/`+'**/*.ts', 'source/ts/common/**/*.ts'], ['compileTS', browser.reload]);
+  gulp.watch([`source/ts/${appName}/`+'**/*.ts', commonTsDir+'**/*.ts'], ['compileTS', browser.reload]);
   //gulp.watch(['src/assets/img/**/*'], ['images', browser.reload]);
 });
