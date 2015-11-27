@@ -53,6 +53,7 @@ function logError(err) {
     //gutil.log(gutil.colors.bgYellow(str));
     console.log(' error '+err);
     errorCount++;
+    this.emit('end');
 }
 
 function logBuildDone() {
@@ -165,13 +166,19 @@ function reportAndReload() {
 	browser.reload();
 }
 
-
+gulp.task('justCompileTs', function(callback) {
+	errorCount = 0;
+	gulp.run('compileTS');
+	logBuildDone();
+	browser.reload();
+	callback();
+});
 
 // Build the site, run the server, and watch for file changes
 gulp.task('default', ['build', 'server'], function() {
   gulp.watch([htmlPagesPattern], ['clearErrors', 'pages', reportAndReload]);
   gulp.watch([htmlSourceDir+'layouts/**/*.html', htmlPartialsDir+'**/*.html'], ['clearErrors', 'pages:reset', reportAndReload]);
   gulp.watch([`source/scss/${appName}/`+'**/*.scss'], ['clearErrors', 'sass', reportAndReload]);
-  gulp.watch([`source/ts/${appName}/`+'**/*.ts', commonTsDir+'**/*.ts'], ['clearErrors', 'compileTS', reportAndReload]);
+  gulp.watch([`source/ts/${appName}/`+'**/*.ts', commonTsDir+'**/*.ts'], ['justCompileTs']);
   //gulp.watch(['src/assets/img/**/*'], ['images', reportAndReload]);
 });
