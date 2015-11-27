@@ -58,12 +58,12 @@ function logError(err) {
 
 function logBuildDone() {
 	console.log(`build completed: ${errorCount} errors`);
-
+	errorCount = 0;
 }
 
 
 function compiler(mainDir, mainFile, destDir, destFile) {
-    errorCount = 0;  // maybe need separate errors for each type?
+    //errorCount = 0;  // maybe need separate errors for each type?
    	console.log('starting TS compiler');
     logCompilation('release '+destFile);
     var bundler = browserify({basedir: mainDir, debug: true, cache: {}, packageCache: {}, fullPaths: true})
@@ -163,28 +163,22 @@ gulp.task('clearErrors', function(callback) {
 	callback();
 });
 
-function reportAndReload() {
-	logBuildDone();
-	browser.reload();
-}
-
-/*
-gulp.task('justCompileTs', function(callback) {
-	errorCount = 0;
-	gulp.run('compileTS', function() {
-		logBuildDone();
-		browser.reload();
-		callback();
-	});
-});
-*/
-
-gulp.task('compileTSAndReload', ['compileTS'], function(callback) {
+function reportAndReload(callback) {
 	logBuildDone();
 	browser.reload();
 	callback();
-});
+}
 
+/*
+gulp.task('compileTSAndReload', ['compileTS'], function(callback) {
+	reportAndReload(callback);
+	//logBuildDone();
+	//browser.reload();
+	//callback();
+});
+*/
+
+gulp.task('compileTSAndReload', ['compileTS'], reportAndReload);
 
 
 // Build the site, run the server, and watch for file changes
