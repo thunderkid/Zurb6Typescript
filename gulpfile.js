@@ -53,16 +53,18 @@ function logError(err) {
     //gutil.log(gutil.colors.bgYellow(str));
     console.log(' error '+err);
     errorCount++;
-    this.emit('end');
+    this.emit('end');    // as advised by http://blog.ibangspacebar.com/handling-errors-with-gulp-watch-and-gulp-plumber/   which also recommends using gulp-plumber for error handling.
 }
 
 function logBuildDone() {
-	console.log(`build completed: ${errorCount} errors`)
+	console.log(`build completed: ${errorCount} errors`);
+
 }
 
 
 function compiler(mainDir, mainFile, destDir, destFile) {
-    console.log('starting TS compiler');
+    errorCount = 0;  // maybe need separate errors for each type?
+   	console.log('starting TS compiler');
     logCompilation('release '+destFile);
     var bundler = browserify({basedir: mainDir, debug: true, cache: {}, packageCache: {}, fullPaths: true})
         .add(mainFile)
@@ -131,7 +133,7 @@ gulp.task('sass', function() {
     .pipe($.sass({
       includePaths: PATHS.sass
     })
-      .on('error', function(e) {logError(e); $.sass.logError(e);}))
+      .on('error', function(e) { $.sass.logError(e); logError(e);}))
     .pipe($.autoprefixer({
       browsers: COMPATIBILITY
     }))
@@ -166,19 +168,30 @@ function reportAndReload() {
 	browser.reload();
 }
 
+/*
 gulp.task('justCompileTs', function(callback) {
 	errorCount = 0;
-	gulp.run('compileTS');
+	gulp.run('compileTS', function() {
+		logBuildDone();
+		browser.reload();
+		callback();
+	});
+});
+*/
+
+gulp.task('compileTSAndReload', ['compileTS'], function(callback) {
 	logBuildDone();
 	browser.reload();
 	callback();
 });
+
+
 
 // Build the site, run the server, and watch for file changes
 gulp.task('default', ['build', 'server'], function() {
   gulp.watch([htmlPagesPattern], ['clearErrors', 'pages', reportAndReload]);
   gulp.watch([htmlSourceDir+'layouts/**/*.html', htmlPartialsDir+'**/*.html'], ['clearErrors', 'pages:reset', reportAndReload]);
   gulp.watch([`source/scss/${appName}/`+'**/*.scss'], ['clearErrors', 'sass', reportAndReload]);
-  gulp.watch([`source/ts/${appName}/`+'**/*.ts', commonTsDir+'**/*.ts'], ['justCompileTs']);
+  gulp.watch([`source/ts/${appName}/`+'**/*.ts', commonTsDir+'**/*.ts'], ['compileTSAndReload']);
   //gulp.watch(['src/assets/img/**/*'], ['images', reportAndReload]);
 });
