@@ -66,7 +66,6 @@ function compiler(mainDir, mainFile, destDir, destFile) {
     var bundler = browserify({basedir: mainDir, debug: true, cache: {}, packageCache: {}, fullPaths: true})
         .add(mainFile)
         .plugin(tsify, { noImplicitAny: false});
-        //.on('error', function (error) { logError('error: ' + error.toString()); }) ;
 
     var uglify = $.if(isProduction, $.streamify($.uglify({mangle: true, mangle_properties: true}).on('error', logError)));      // minification. mangle_properties doesn't seem to work.
 
@@ -156,11 +155,23 @@ gulp.task('server', ['build'], function() {
 });
 
 
+gulp.task('clearErrors', function(callback) {
+	errorCount = 0;
+	callback();
+});
+
+function reportAndReload() {
+	logBuildDone();
+	browser.reload();
+}
+
+
+
 // Build the site, run the server, and watch for file changes
 gulp.task('default', ['build', 'server'], function() {
-  gulp.watch([htmlPagesPattern], ['pages', browser.reload]);
-  gulp.watch([htmlSourceDir+'layouts/**/*.html', htmlPartialsDir+'**/*.html'], ['pages:reset', browser.reload]);
-  gulp.watch([`source/scss/${appName}/`+'**/*.scss'], ['sass', browser.reload]);
-  gulp.watch([`source/ts/${appName}/`+'**/*.ts', commonTsDir+'**/*.ts'], ['compileTS', browser.reload]);
-  //gulp.watch(['src/assets/img/**/*'], ['images', browser.reload]);
+  gulp.watch([htmlPagesPattern], ['clearErrors', 'pages', reportAndReload]);
+  gulp.watch([htmlSourceDir+'layouts/**/*.html', htmlPartialsDir+'**/*.html'], ['clearErrors', 'pages:reset', reportAndReload]);
+  gulp.watch([`source/scss/${appName}/`+'**/*.scss'], ['clearErrors', 'sass', reportAndReload]);
+  gulp.watch([`source/ts/${appName}/`+'**/*.ts', commonTsDir+'**/*.ts'], ['clearErrors', 'compileTS', reportAndReload]);
+  //gulp.watch(['src/assets/img/**/*'], ['images', reportAndReload]);
 });
