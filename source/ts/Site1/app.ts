@@ -10,7 +10,7 @@ var foundation = require('foundation-sites');
 $(document).ready(setRunt);
 
 function setRunt() {
-	// noljdsfksd
+	 //  lfdfsfkd  jllkdjkjfskl sdfsdffdf noljdsfksd
 	$(document).foundation();
 	$('#runt').click( pusser );	
 	$('#toggly').click(toggit);
@@ -28,7 +28,7 @@ function yellowy() {
 
 function pusser() {
 	var sayy = new Sayer();
-	alert('primary runt clicked'+sayy.sayit());
+	alert('primary tiny stingy runt clicked'+sayy.sayit());
 	$('#stain').toggle();
 }
 

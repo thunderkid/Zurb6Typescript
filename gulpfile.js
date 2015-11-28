@@ -158,34 +158,23 @@ gulp.task('server', ['build'], function() {
 });
 
 
-gulp.task('clearErrors', function(callback) {
-	errorCount = 0;
-	callback();
-});
-
 function reportAndReload(callback) {
 	logBuildDone();
 	browser.reload();
 	callback();
 }
 
-/*
-gulp.task('compileTSAndReload', ['compileTS'], function(callback) {
-	reportAndReload(callback);
-	//logBuildDone();
-	//browser.reload();
-	//callback();
-});
-*/
-
+gulp.task('pagesAndReload', ['pages'], reportAndReload);
+gulp.task('pagesResetAndReload', ['pages:reset'], reportAndReload);
+gulp.task('sassAndReload', ['sass'], reportAndReload);
 gulp.task('compileTSAndReload', ['compileTS'], reportAndReload);
 
 
 // Build the site, run the server, and watch for file changes
 gulp.task('default', ['build', 'server'], function() {
-  gulp.watch([htmlPagesPattern], ['clearErrors', 'pages', reportAndReload]);
-  gulp.watch([htmlSourceDir+'layouts/**/*.html', htmlPartialsDir+'**/*.html'], ['clearErrors', 'pages:reset', reportAndReload]);
-  gulp.watch([`source/scss/${appName}/`+'**/*.scss'], ['clearErrors', 'sass', reportAndReload]);
+  gulp.watch([htmlPagesPattern], ['pagesAndReload']);
+  gulp.watch([htmlSourceDir+'layouts/**/*.html', htmlPartialsDir+'**/*.html'], ['pagesResetAndReload']);
+  gulp.watch([`source/scss/${appName}/`+'**/*.scss'], ['sassAndReload']);
   gulp.watch([`source/ts/${appName}/`+'**/*.ts', commonTsDir+'**/*.ts'], ['compileTSAndReload']);
   //gulp.watch(['src/assets/img/**/*'], ['images', reportAndReload]);
 });
