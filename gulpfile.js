@@ -8,7 +8,7 @@ var tsify			= require('tsify');
 var source 			= require('vinyl-source-stream');
 var rimraf          = require('rimraf');
 var panini  		= require('panini');
-
+var plumber 	    = require('gulp-plumber');
 
 // pass param --site="Site2" etc.
 var appName = !!(argv.site) ? argv.site : 'Site1';
@@ -51,7 +51,8 @@ function logCompilation(projName) {
 var errorCount = 0;
 function logError(err) {
     //gutil.log(gutil.colors.bgYellow(str));
-    console.log(' error '+err);
+    //console.trace('here I am');
+    console.log(' error '+ err);
     errorCount++;
     this.emit('end');    // as advised by http://blog.ibangspacebar.com/handling-errors-with-gulp-watch-and-gulp-plumber/   which also recommends using gulp-plumber for error handling.
 }
@@ -129,14 +130,15 @@ gulp.task('sass', function() {
   var minifycss = $.if(isProduction, $.minifyCss());
 
   return gulp.src(scssStartFile)
-    .pipe($.sourcemaps.init())
-    .pipe($.sass({
-      includePaths: PATHS.sass
-    })
-      .on('error', function(e) { $.sass.logError(e); logError(e);}))
-    .pipe($.autoprefixer({
-      browsers: COMPATIBILITY
+    .pipe(plumber({
+        handleError: function (err) {
+            console.log(err);
+            this.emit('end');
+        }
     }))
+    .pipe($.sourcemaps.init())
+    .pipe($.sass({ includePaths: PATHS.sass }))   //.on('error', function(e) { $.sass.logError(e); /*logError(e);*/}))
+    .pipe($.autoprefixer({ browsers: COMPATIBILITY }))
  //   .pipe(uncss)
     .pipe(minifycss)
     .pipe($.if(!isProduction, $.sourcemaps.write()))
