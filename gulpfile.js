@@ -130,38 +130,6 @@ gulp.task('sass', function() {
   var minifycss = $.if(isProduction, $.minifyCss());
 
   return gulp.src(scssStartFile)
-    .pipe(plumber({
-        handleError: function (err) {
-            console.log(err);
-            this.emit('end');
-        }
-    }))
-    .pipe($.sourcemaps.init())
-    .pipe($.sass({ includePaths: PATHS.sass }))   //.on('error', function(e) { $.sass.logError(e); /*logError(e);*/}))
-    .pipe($.autoprefixer({ browsers: COMPATIBILITY }))
- //   .pipe(uncss)
-    .pipe(minifycss)
-    .pipe($.if(!isProduction, $.sourcemaps.write()))
-    .pipe(gulp.dest(outputDir));  // will name it output/app.css  
-});
-
-
-
-// Compile Sass into CSS
-// In production, the CSS is compressed
-gulp.task('sass2', function() {
-
-  // var uncss = $.if(isProduction, $.uncss({
-  //   html: ['src/**/*.html'],
-  //   ignore: [
-  //     new RegExp('^meta\..*'),
-  //     new RegExp('^\.is-.*')
-  //   ]
-  // }));
-
-  var minifycss = $.if(isProduction, $.minifyCss());
-
-  return gulp.src(scssStartFile)
     .pipe($.sourcemaps.init())
     .pipe($.sass({
       includePaths: PATHS.sass
@@ -175,10 +143,6 @@ gulp.task('sass2', function() {
     .pipe($.if(!isProduction, $.sourcemaps.write()))
     .pipe(gulp.dest(outputDir));
 });
-
-
-
-
 
 
 // Build the "output" folder by running all of the above tasks
@@ -211,7 +175,7 @@ gulp.task('compileTSAndReload', ['compileTS'], reportAndReload);
 gulp.task('default', ['build', 'server'], function() {
   gulp.watch([htmlPagesPattern], ['pagesAndReload']);
   gulp.watch([htmlSourceDir+'layouts/**/*.html', htmlPartialsDir+'**/*.html'], ['pagesResetAndReload']);
-  gulp.watch([`source/scss/${appName}/`+'**/*.scss'], ['sass2', browser.reload]);   // ['sassAndReload']);
+  gulp.watch([`source/scss/${appName}/`+'**/*.scss'], ['sassAndReload']);
   gulp.watch([`source/ts/${appName}/`+'**/*.ts', commonTsDir+'**/*.ts'], ['compileTSAndReload']);
   //gulp.watch(['src/assets/img/**/*'], ['images', reportAndReload]);
 });
