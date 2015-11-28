@@ -127,12 +127,6 @@ gulp.task('sass', function() {
 //    ]
 //  }));
 
-	function onErr(err) {
-		errorCount++;
-		$.sass.logError.bind(this)(err);
-	}
-
-
   var minifycss = $.if(isProduction, $.minifyCss());
 
   return gulp.src(scssStartFile)
@@ -140,10 +134,7 @@ gulp.task('sass', function() {
     .pipe($.sass({
       includePaths: PATHS.sass
     })
-    	.on('error', logError))  // my own logError works. Also $.sass.logError works. But creating a function onErr(err) that calls $.sass.logError(err) fails. Even binding it. Don't know why.
-    //  .on('error', onErr.bind(this)))   // logError /* $.sass.logError**/))  // $.sass.logError works too, but without incrementing error count. 
-     // .on('error', onErr.bind(this) ))
-//      .on('error', function() { errorCount++; $.sass.logError(); }))
+      .on('error', logError))  // my own logError works. Also $.sass.logError works. But creating a function onErr(err) that calls $.sass.logError(err) fails. Even binding it. Don't know why.
     .pipe($.autoprefixer({
       browsers: COMPATIBILITY
     }))
