@@ -88,7 +88,7 @@ gulp.task('compileTS', function() {
 // Copy page templates into finished HTML files
 gulp.task('pages', function() {
 
-  gulp.src(htmlPagesPattern)
+  return gulp.src(htmlPagesPattern)
     .pipe(panini({
       root: htmlSourceDir+'pages/',
       layouts: htmlSourceDir+'layouts/',
