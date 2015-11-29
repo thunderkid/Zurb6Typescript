@@ -9,7 +9,7 @@ var source 			= require('vinyl-source-stream');
 var rimraf          = require('rimraf');
 var panini  		= require('panini');
 var plumber 	    = require('gulp-plumber');
-var notify 			= require('gulp-notify');
+var notifier	    = require('node-notifier')
 
 // pass param --site="Site2" etc.
 var appName = !!(argv.site) ? argv.site : 'Site1';
@@ -52,8 +52,13 @@ function logError(err) {
 }
 
 function logBuildDone() {
-	notify.onError({ message: 'blah blah blah'});
-	//notify(`build completed: ${errorCount} errors`);
+	notifier.notify(
+	{
+		title: "Ok",
+		message: `build completed: ${errorCount} errors`,
+		sound: (errorCount > 0)
+	}
+	);
 	console.log(`build completed: ${errorCount} errors`);
 	errorCount = 0;
 }
