@@ -81,6 +81,7 @@ gulp.task('compileTS', function() {
 gulp.task('pages', function() {
 
   return gulp.src(htmlPagesPattern)
+    //.pipe(plumber({handleError: logError}))
     .pipe(panini({
       root: htmlSourceDir+'pages/',
       layouts: htmlSourceDir+'layouts/',
