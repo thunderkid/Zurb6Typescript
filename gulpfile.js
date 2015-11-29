@@ -23,8 +23,6 @@ var PORT = 8000;
 var COMPATIBILITY = ['last 2 versions', 'ie >= 9'];
 
 var PATHS = {
-  source: 'source',
-  output: 'output',
   sass: [
     'node_modules/foundation-sites/scss',
     'node_modules/motion-ui/src/'
