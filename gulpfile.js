@@ -44,16 +44,8 @@ var tsOutputFile = 'appbundle.js';
 var outputDir = `output/${appName}`;
 
 
-var compilationCount = 1;
-function logCompilation(projName) {
-    console.log(' doing ts/js compilation # '+(compilationCount++)+ ' for ' + projName + ':');
-}
-
-
 var errorCount = 0;
 function logError(err) {
-    //gutil.log(gutil.colors.bgYellow(str));
-    //console.trace('here I am');
     console.log(' error '+ err);
     errorCount++;
     this.emit('end');    // as advised by http://blog.ibangspacebar.com/handling-errors-with-gulp-watch-and-gulp-plumber/   which also recommends using gulp-plumber for error handling.
@@ -99,9 +91,13 @@ gulp.task('pages', function() {
 
 
 gulp.task('pages:reset', function(callback) {
-  panini.refresh();
-  gulp.run('pages');
-  callback();
+  sequence('paniniRefresh', 'pages', callback);
+});
+
+
+gulp.task('paniniRefresh', function(callback) {
+	panini.refresh();
+	callback();
 });
 
 
