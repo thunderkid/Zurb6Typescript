@@ -9,6 +9,7 @@ var source 			= require('vinyl-source-stream');
 var rimraf          = require('rimraf');
 var panini  		= require('panini');
 var plumber 	    = require('gulp-plumber');
+var notify 			= require('gulp-notify');
 
 // pass param --site="Site2" etc.
 var appName = !!(argv.site) ? argv.site : 'Site1';
@@ -58,6 +59,7 @@ function logError(err) {
 }
 
 function logBuildDone() {
+	notify(`build completed: ${errorCount} errors`);
 	console.log(`build completed: ${errorCount} errors`);
 	errorCount = 0;
 }
