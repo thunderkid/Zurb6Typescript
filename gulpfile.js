@@ -43,26 +43,23 @@ var commonTsDir = 'source/ts/common/';	  // common typescript functionality
 var tsOutputFile = 'appbundle.js';
 var outputDir = `output/${appName}`;
 
-
-var errorCount = 0;
+var errorList = [];
 function logError(err) {
     console.log(' error '+ err);
-    errorCount++;
+    errorList.push(err);
     this.emit('end');    // as advised by http://blog.ibangspacebar.com/handling-errors-with-gulp-watch-and-gulp-plumber/   which also recommends using gulp-plumber for error handling.
 }
 
 function logBuildDone() {
 	notifier.notify(
 	{
-		title: "Ok",
-		message: `build completed: ${errorCount} errors`,
-		sound: (errorCount > 0)
-	}
-	);
-	console.log(`build completed: ${errorCount} errors`);
-	errorCount = 0;
+		title: (errorList.length > 0 ? "FAILED" : "Ok"),
+		message: (errorList.length > 0 ? `Errors:\n${errorList.join("\n")}` : 'no errors'),
+		sound: (errorList.length > 0)
+	});
+	console.log(`build completed: ${errorList.length} errors`);
+	errorList = [];
 }
-
 
 gulp.task('compileTS', function() {
    	console.log('starting TS compiler');
