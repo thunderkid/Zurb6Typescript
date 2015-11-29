@@ -28,7 +28,7 @@ function yellowy() {
 
 function pusser() {
 	var sayy = new Sayer();
-	alert('primary tiny stingy runt clicked'+sayy.sayit());
+	alert('primary tiny whiney runt clicked'+sayy.sayit());
 	$('#stain').toggle();
 }
 

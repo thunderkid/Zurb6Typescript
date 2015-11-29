@@ -36,6 +36,8 @@ var tsStartFile = `source/ts/${appName}/app.ts`;
 var scssStartFile = `source/scss/${appName}/app.scss`;
 var htmlSourceDir = `source/html/${appName}/`;
 var htmlPagesPattern = htmlSourceDir+'pages/**/*.{html,hbs,handlebars}';
+var imagesSourceDir = `source/images/${appName}/`;
+var imagesPattern = imagesSourceDir+'**/*.{jpg,JPG,gif,GIF,bmp,BMP}';  // exclude .db thumbs that get created if you just open folder in explorer.
 
 var htmlPartialsDir =  'source/html/partials/';   // using this as a common location of reusable partials for all apps.
 var commonTsDir = 'source/ts/common/';	  // common typescript functionality
@@ -81,7 +83,7 @@ gulp.task('compileTS', function() {
 gulp.task('pages', function() {
 
   return gulp.src(htmlPagesPattern)
-    //.pipe(plumber({handleError: logError}))
+    //.pipe(plumber({handleError: logError}))  // this doesn't seem to work. No documentation on panini errors.
     .pipe(panini({
       root: htmlSourceDir+'pages/',
       layouts: htmlSourceDir+'layouts/',
@@ -116,7 +118,8 @@ gulp.task('clean', function(done) {
 gulp.task('sass', function() {
 
 //  var uncss = $.if(isProduction, $.uncss({  // this removes unused css. Didn't work - seemed to remove everything.
-//    html: ['source/**/*.html'],  // and this needs to be changed if we ever use it.
+//    html: ['source/**/*.html'],  // and this needs to be changed if we ever use it. Needs to include partials too (but shared partials could be too broad). Alternatively could use final html output. But then we'd need to make sure
+													// it's run in sequence, after html has been produced.
 //    ignore: [
 //      new RegExp('^meta\..*'),
 //      new RegExp('^\.is-.*')
@@ -141,9 +144,23 @@ gulp.task('sass', function() {
 });
 
 
+// Copy images to the output folder
+// In production, the images are compressed
+gulp.task('images', function() {
+  console.log(imagesPattern + '    ->     ' + outputDir);
+  var imagemin = $.if(isProduction, $.imagemin({
+    progressive: true
+  }));
+
+  return gulp.src(imagesPattern)
+    .pipe(imagemin)
+    .pipe(gulp.dest(outputDir+'/images'));
+});
+
+
 // Build the "output" folder by running all of the above tasks
 gulp.task('build', function(done) {
-  sequence('clean', ['pages', 'sass', 'compileTS'], done);
+  sequence('clean', ['pages', 'sass', 'compileTS', 'images'], done);
 });
 
 // Start a server with LiveReload to preview the site in
@@ -165,6 +182,7 @@ gulp.task('pagesAndReload', ['pages'], reportAndReload);
 gulp.task('pagesResetAndReload', ['pages:reset'], reportAndReload);
 gulp.task('sassAndReload', ['sass'], reportAndReload);
 gulp.task('compileTSAndReload', ['compileTS'], reportAndReload);
+gulp.task('imagesAndReload', ['images'], reportAndReload);
 
 
 // Build the site, run the server, and watch for file changes
@@ -173,5 +191,5 @@ gulp.task('default', ['build', 'server'], function() {
   gulp.watch([htmlSourceDir+'layouts/**/*.html', htmlPartialsDir+'**/*.html'], ['pagesResetAndReload']);
   gulp.watch([`source/scss/${appName}/`+'**/*.scss'], ['sassAndReload']);
   gulp.watch([`source/ts/${appName}/`+'**/*.ts', commonTsDir+'**/*.ts'], ['compileTSAndReload']);
-  //gulp.watch(['src/assets/img/**/*'], ['images', reportAndReload]);
+  gulp.watch([imagesPattern], ['imagesAndReload']);
 });
