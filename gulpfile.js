@@ -40,6 +40,7 @@ var htmlPagesPattern = htmlSourceDir+'pages/**/*.{html,hbs,handlebars}';
 var htmlPartialsDir =  'source/html/partials/';   // using this as a common location of reusable partials for all apps.
 var commonTsDir = 'source/ts/common/';	  // common typescript functionality
 
+var tsOutputFile = 'appbundle.js';
 var outputDir = `output/${appName}`;
 
 
@@ -59,32 +60,26 @@ function logError(err) {
 }
 
 function logBuildDone() {
-	notify(`build completed: ${errorCount} errors`);
+	notify.onError({ message: 'blah blah blah'});
+	//notify(`build completed: ${errorCount} errors`);
 	console.log(`build completed: ${errorCount} errors`);
 	errorCount = 0;
 }
 
 
-function compiler(mainDir, mainFile, destDir, destFile) {
-    //errorCount = 0;  // maybe need separate errors for each type?
+gulp.task('compileTS', function() {
    	console.log('starting TS compiler');
-    logCompilation('release '+destFile);
-    var bundler = browserify({basedir: mainDir, debug: true, cache: {}, packageCache: {}, fullPaths: true})
-        .add(mainFile)
+    var bundler = browserify({basedir: './', debug: true, cache: {}, packageCache: {}, fullPaths: true})
+        .add(tsStartFile)
         .plugin(tsify, { noImplicitAny: false});
 
     var uglify = $.if(isProduction, $.streamify($.uglify({mangle: true, mangle_properties: true}).on('error', logError)));      // minification. mangle_properties doesn't seem to work.
 
     return bundler.bundle()
         	.on('error', logError) 
-            .pipe(source(destFile))
+            .pipe(source(tsOutputFile))
             .pipe(uglify)
-            .pipe(gulp.dest(destDir));
-}
-
-
-gulp.task('compileTS', function() {
-    return compiler('./', tsStartFile, outputDir, 'appbundle.js', true);
+            .pipe(gulp.dest(outputDir));
 });
 
 
